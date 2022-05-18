@@ -33,18 +33,16 @@ class PrivateTagsApiTests(TestCase):
             "test@test.com", "testpass1234"
         )
         self.client = APIClient()
-        self.client.force_authenticate(self.user)
+        self.client.force_authenticate(user=self.user)
 
     def test_retrieve_tags(self):
         """Test retrieving tags"""
         Tag.objects.create(user=self.user, name="Vegan")
         Tag.objects.create(user=self.user, name="Dessert")
-
-        res = self.client.get(TAGS_URL)
-
         tags = Tag.objects.all().order_by("-name")
         serializer = TagSerializer(tags, many=True)
 
+        res = self.client.get(TAGS_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -56,7 +54,23 @@ class PrivateTagsApiTests(TestCase):
         tag = Tag.objects.create(user=self.user, name="Comfort Food")
 
         res = self.client.get(TAGS_URL)
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]["name"], tag.name)
+
+    def test_create_tag_successful(self):
+        """Test creating a new tag"""
+        payload = {"name": "Test Tag", "user": self.user.id}
+        res = self.client.post(TAGS_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        tag_exists = Tag.objects.filter(
+            user=self.user, name=payload["name"]
+        ).exists()
+        self.assertTrue(tag_exists)
+
+    def test_create_tag_invalid(self):
+        """Test creating a new tag with invalid payload"""
+        payload = {"name": "", "user": self.user.id}
+        res = self.client.post(TAGS_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
