@@ -66,3 +66,25 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Recipe(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255)
+    time_minutes = models.IntegerField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    """Optional field에는 blank=True 파라미터 추천
+    null=True까지 설정할 경우, non/blank/has value 3가지 경우를 체크해야 함
+    불필요한 복잡도만 상승시킴.
+    """
+    link = models.CharField(max_length=255, blank=True)
+    """provide the name of the class 'in a string' it doesn't matter
+    which order you place the models in. - Django's awesom feature
+    """
+    ingredients = models.ManyToManyField("Ingredient")
+    tags = models.ManyToManyField("Tag")
+
+    def __str__(self):
+        return self.title

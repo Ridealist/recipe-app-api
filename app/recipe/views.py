@@ -20,7 +20,6 @@ class BaseRecipeAttrViewSet(
         return self.queryset.filter(user=self.request.user).order_by("-name")
 
     def perform_create(self, serializer):
-        """Create a new tag"""
         serializer.save(user=self.request.user)
 
 
@@ -32,3 +31,7 @@ class TagViewSet(BaseRecipeAttrViewSet):
 class IngredientViewSet(BaseRecipeAttrViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = serializers.IngredientSerializer
+
+
+"""Beauty of test-driven development is that improving the code a lot easier"""
+"""We can have confidence that there is a baseline of functionality that will always work when you run tests"""

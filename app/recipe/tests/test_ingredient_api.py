@@ -9,7 +9,6 @@ from core.models import Ingredient
 
 from recipe.serializers import IngredientSerializer
 
-
 INGREDIENT_URL = reverse("recipe:ingredient-list")
 
 
@@ -47,7 +46,7 @@ class PrivateIngredientAPITests(TestCase):
         self.assertEqual(res.data, serialzer.data)
 
     def test_ingredients_limited_to_user(self):
-        """Test only ingredients for the authenticated user are returned"""
+        """Test only ingredients for the current authenticated user are returned"""
         user2 = get_user_model().objects.create_user(
             "other@test.com", "testpass4321"
         )
@@ -60,9 +59,17 @@ class PrivateIngredientAPITests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]["name"], ingredients.name)
 
+        client2 = APIClient()
+        client2.force_authenticate(user=user2)
+        res2 = client2.get(INGREDIENT_URL)
+        instance = Ingredient.objects.get(name="Vinegar")
+        serializer = IngredientSerializer(instance)
+        self.assertEqual(res2.status_code, status.HTTP_200_OK)
+        self.assertEqual(res2.data[0], serializer.data)
+
     def test_create_ingredient_successful(self):
         """Test create a new ingredient"""
-        payload = {"name": "Cabage", "user": self.user.id}
+        payload = {"name": "Cabbage", "user": self.user.id}
         self.client.post(INGREDIENT_URL, payload)
 
         exists = Ingredient.objects.filter(
