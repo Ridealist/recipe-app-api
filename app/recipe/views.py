@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Tag, Ingredient
+from core.models import Tag, Ingredient, Recipe
 
 from recipe import serializers
 
@@ -33,5 +33,20 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
     serializer_class = serializers.IngredientSerializer
 
 
-"""Beauty of test-driven development is that improving the code a lot easier"""
-"""We can have confidence that there is a baseline of functionality that will always work when you run tests"""
+"""
+Beauty of test-driven development is that improving the code a lot easier.
+We can have confidence that there is a baseline of functionality,
+that will always work when you run tests
+"""
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    """Manage recipes in the database"""
+
+    queryset = Recipe.objects.all()
+    serializer_class = serializers.RecipeSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)

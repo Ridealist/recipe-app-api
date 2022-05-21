@@ -88,3 +88,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+
+"""commit & push를 run test가 성공적으로 pass 할때마다 실행하는 것 추천"""
