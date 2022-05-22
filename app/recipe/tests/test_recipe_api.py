@@ -162,6 +162,46 @@ class PrivateRecipeAPITests(TestCase):
         self.assertIn(ingredient1, ingredients)
         self.assertIn(ingredient2, ingredients)
 
+    def test_partial_update_recipe(self):
+        """Test update a recipe with patch method"""
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        new_tag = sample_tag(user=self.user, name="Curry")
+        payload = {"title": "Chicken tikka", "tags": [new_tag.id]}
+
+        url = detail_url(recipe.id)
+        res = self.client.patch(url, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        # recipe = Recipe.objects.get(id=res.data["id"]) -> 불필요!
+        # 모델 인스턴스를 만들고 변화가 생겼을 경우 해당 인스턴스에는 변화 반영 X
+        # refresh DB를 해줘야 데이터베이스 value 변경사항이 instance에 반영된다.
+        recipe.refresh_from_db()
+        tags = recipe.tags.all()
+        self.assertEqual(recipe.title, payload["title"])
+        self.assertEqual(tags.count(), 1)
+        self.assertIn(new_tag, tags)
+
+    def test_full_updata_recipe(self):
+        """Test updating a recipe with put"""
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        # PUT method는 전체 update를 하므로 없는 field 값은 제외 시킴
+        # 따라서 tags fields는 blank 값으로 초기화됨
+        payload = {
+            "title": "Spagetti carbonara",
+            "time_minutes": 25,
+            "price": 5.00,
+        }
+        url = detail_url(recipe.id)
+        res = self.client.put(url, payload)
+        recipe.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        for key in payload.keys():
+            self.assertEqual(payload[key], getattr(recipe, key))
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 0)
+
     # @classmethod
     # def setUpTestData(cls):
     #     cls.user = get_user_model().objects.create_user(
