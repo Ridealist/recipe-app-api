@@ -6,7 +6,7 @@ from core.models import Tag, Ingredient, Recipe
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = "__all__"
+        fields = ("id", "name")
         read_only_fields = ("id",)
 
 
@@ -30,7 +30,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            "user",
+            "id",
             "title",
             "time_minutes",
             "price",

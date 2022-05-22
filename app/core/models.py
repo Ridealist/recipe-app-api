@@ -17,7 +17,6 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         # supportin multiple databases
         user.save(using=self._db)
-
         return user
 
     def create_superuser(self, email, password):
@@ -26,7 +25,6 @@ class UserManager(BaseUserManager):
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
-
         return user
 
 

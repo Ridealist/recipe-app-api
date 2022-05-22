@@ -55,5 +55,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Return appropriate serializer class by action"""
         if self.action == "retrieve":
             return serializers.RecipeDetailSerializer
-
         return self.serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

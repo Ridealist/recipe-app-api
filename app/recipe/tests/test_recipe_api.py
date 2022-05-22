@@ -53,10 +53,18 @@ class PrivateRecipeAPITests(TestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            "test@test.com", "testpass1234"
+            "testuser@recipe.com", "testpass1234"
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+        # res = self.client.post(
+        #     "/api/user/token/",
+        #     data={"email": "test@test.com", "password": "testpass1234"},
+        # )
+        # self.token = res.data["token"]
+        # print(self.token)
+        # self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token}")
+        # self.client.login(email="test@test.com", password="testpass1234")
 
     def test_retrieve_recipe_list(self):
         sample_recipe(user=self.user)
@@ -99,6 +107,60 @@ class PrivateRecipeAPITests(TestCase):
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_basic_recipe(self):
+        """Test creating recipe"""
+        payload = {
+            "title": "Chocolate cheesecake",
+            "time_minutes": 15,
+            "price": 5.00,
+        }
+        res = self.client.post(RECIPES_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipe = Recipe.objects.get(id=res.data["id"])
+        for key in payload.keys():
+            self.assertEqual(payload[key], getattr(recipe, key))
+            # getattr : python built-in func, 변수를 넘겨줘서 어떤 object의
+            #           attribute를 가져올 수 있음
+
+    def test_create_recipe_with_tags(self):
+        """Test creating a recipe with tags"""
+        tag1 = sample_tag(user=self.user, name="Vegan")
+        tag2 = sample_tag(user=self.user, name="Dessert")
+        payload = {
+            "title": "Avocado lime cheesecake",
+            "tags": [tag1.id, tag2.id],
+            "time_minutes": 60,
+            "price": 20.00,
+        }
+        res = self.client.post(RECIPES_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        recipe = Recipe.objects.get(id=res.data["id"])
+        # M2M field에서 연관된 모든 object 가져오기
+        tags = recipe.tags.all()
+        self.assertTrue(tags.count(), 2)
+        self.assertIn(tag1, tags)
+        self.assertIn(tag1, tags)
+
+    def test_create_recipe_ingredients(self):
+        """Test creating a recipe with ingredients"""
+        ingredient1 = sample_ingredient(user=self.user, name="Prawns")
+        ingredient2 = sample_ingredient(user=self.user, name="Ginger")
+        payload = {
+            "title": "Thai prawn red curry",
+            "ingredients": [ingredient1.id, ingredient2.id],
+            "time_minutes": 20,
+            "price": 7.00,
+        }
+        res = self.client.post(RECIPES_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        recipe = Recipe.objects.get(id=res.data["id"])
+        ingredients = recipe.ingredients.all()
+        self.assertEqual(ingredients.count(), 2)
+        self.assertIn(ingredient1, ingredients)
+        self.assertIn(ingredient2, ingredients)
 
     # @classmethod
     # def setUpTestData(cls):
