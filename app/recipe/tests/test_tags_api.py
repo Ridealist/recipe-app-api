@@ -60,7 +60,7 @@ class PrivateTagsApiTests(TestCase):
 
     def test_create_tag_successful(self):
         """Test creating a new tag"""
-        payload = {"name": "Test Tag", "user": self.user.id}
+        payload = {"name": "Test Tag"}
         res = self.client.post(TAGS_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
@@ -71,6 +71,6 @@ class PrivateTagsApiTests(TestCase):
 
     def test_create_tag_invalid(self):
         """Test creating a new tag with invalid payload"""
-        payload = {"name": "", "user": self.user.id}
+        payload = {"name": ""}
         res = self.client.post(TAGS_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
