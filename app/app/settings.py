@@ -130,6 +130,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+
+STATIC_ROOT = "/vol/web/static"
+MEDIA_ROOT = "/vol/web/media"
+
+# 127.0.0.1:8000/static/ --> map to static directory
+# 127.0.0.1:8000/media/ --> map to media directory
+# media 파일을 upload 했을 때 accessible URL을 통해 web server에서 파일을 가져옴
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
