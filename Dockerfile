@@ -9,6 +9,7 @@ WORKDIR /app
 EXPOSE 8000
 
     # 가상환경 생성
+ARG DEV=true
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client jpeg-dev && \
