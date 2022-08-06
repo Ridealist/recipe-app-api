@@ -15,7 +15,6 @@ RUN python -m venv /py && \
     apk add --update --no-cache --virtual .tmp-build-deps \
         build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
     /py/bin/pip install -r /tmp/requirements.txt && \
-    fi && \
     # actual image에서 사용하지 않을 파일은 build process에서 삭제하는 습관!(임시파일 등)
     # TO make Docker image as lightweight as possible
     rm -rf /tmp && \
