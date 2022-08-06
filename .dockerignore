@@ -1,0 +1,16 @@
+# Git
+.git
+.gitignore
+
+# Docker
+.docker
+
+# Python
+## Docker ignore은 **같은 subdirectory 지정 형식을 지원하지 않음
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*__pycache__/
+.env/
+.venv/
+venv/
