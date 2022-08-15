@@ -4,6 +4,7 @@ LABEL maintainer="github.com/Ridiealist"
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./app /app
 WORKDIR /app
 EXPOSE 8000
@@ -18,6 +19,9 @@ RUN python -m venv /py && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     # actual image에서 사용하지 않을 파일은 build process에서 삭제하는 습관!(임시파일 등)
     # TO make Docker image as lightweight as possible
+    if [ $DEV = "true"]; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+    fi && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
     # Image 안에 new user 생성 -> root user로 설정되는것 방지 위함
