@@ -22,6 +22,8 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=supersecretpassword
+      # settings.py 변경 내용 반영
+      - DEBUG=1
     depends_on:
       - db
 
