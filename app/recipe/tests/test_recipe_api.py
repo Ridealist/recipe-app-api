@@ -42,7 +42,6 @@ def sample_recipe(user, **params):
     """Create and return a sample recipe"""
     defaults = {"title": "Sample Recipe", "time_minutes": 10, "price": 5.00}
     defaults.update(params)
-
     return Recipe.objects.create(user=user, **defaults)
 
 

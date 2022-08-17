@@ -49,6 +49,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
 
+    def __str__(self):
+        if self.name:
+            return self.name
+        else:
+            return self.email
+
 
 class Tag(models.Model):
     """Tag to be used for a recipe"""
