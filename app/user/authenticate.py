@@ -28,7 +28,8 @@ class CustomAuthentication(TokenAuthentication):
                 raise exceptions.AuthenticationFailed(msg)
             elif len(auth) > 2:
                 msg = _(
-                    "Invalid token header. Token string should not contain spaces."
+                    "Invalid token header. \
+                        Token string should not contain spaces."
                 )
                 raise exceptions.AuthenticationFailed(msg)
 
@@ -36,7 +37,8 @@ class CustomAuthentication(TokenAuthentication):
                 token = auth[1].decode()
             except UnicodeError:
                 msg = _(
-                    "Invalid token header. Token string should not contain invalid characters."
+                    "Invalid token header. \
+                        Token string should not contain invalid characters."
                 )
                 raise exceptions.AuthenticationFailed(msg)
 
