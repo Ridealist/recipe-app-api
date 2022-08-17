@@ -12,6 +12,7 @@ services:
     volumes:
       # app directory를 mapping하여 container - project를 연결시킴(한쪽이 수정되면 다른쪽에도 자동 반영됨)
       - ./app:/app
+      - dev-static-data:/vol/web
     command: >
       sh -c "python manage.py wait_for_db && 
              python manage.py makemigrations &&
@@ -38,3 +39,4 @@ services:
 
 volumes:
   dev-db-data:
+  dev-static-data:

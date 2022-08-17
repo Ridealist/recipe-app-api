@@ -39,7 +39,7 @@ services:
     ports:
       # local에서 실행해볼때 8000으로.
       # deploy에서는 80포트로.
-      - 80:8000
+      - 8000:8000
     volumes:
       - static-data:/vol/static
   
